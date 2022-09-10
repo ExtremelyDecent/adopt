@@ -1,4 +1,4 @@
-from flask import Flask, url_for, render_template, flash, jsonify
+from flask import Flask, url_for, render_template, flash, jsonify, redirect
 
 from flask_debugtoolbar import DebugToolbarExtension
 
@@ -12,8 +12,8 @@ app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "watercolor12345"
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postresql://adopt"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = flask_debugtoolbar
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///adopt"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 connect_db(app)
 db.create_all()
@@ -42,10 +42,10 @@ def add_pet():
         db.session.commit()
         flash(f"{new_pet.name} added.")
         return redirect(url_for('list_pets'))
-        else:
-           return render_template("pet_add_form.html", form= form)
+    else:
+        return render_template("pet_add_form.html", form= form)
 
-@app.route("/<int:pet_id>", methods = ["GET, POST"])
+@app.route("/<int:pet_id>", methods = ["GET","POST"])
 def edit_pet(pet_id):
     """ edit pet"""
 
@@ -59,6 +59,7 @@ def edit_pet(pet_id):
         pet.photo_url = form.photo_url.data
         db.session.commit()
         flash(f"{pet.name} updated.")
+        return redirect(url_for('list_pets'))
 
     else:
         # failed validation

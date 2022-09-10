@@ -22,7 +22,7 @@ class Pet(db.Model):
 
         return self.photo_url or DEFAULT_IMAGE
     
-def connect_db(app)
+def connect_db(app):
     """Connects to database for flask app"""
 
     db.app = app
